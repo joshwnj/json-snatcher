@@ -283,12 +283,9 @@ TODO: Remove extra comma printed after lists of object members, and lists of arr
       (jsons-print-to-buffer buffer (elt node 1)))
      (t nil))))
 
-;;;###autoload
-(defun jsons-print-path ()
-  "Print the path to the JSON value under point, and save it in the kill ring."
-  (interactive)
-  (let ((path (jsons-get-path))
-        (i 0)
+(defun jsons-render-path (path)
+  "Render the path as a string"
+  (let ((i 0)
         (python_str ""))
     (setq path (reverse path))
     (while (< i (length path))
@@ -299,6 +296,13 @@ TODO: Remove extra comma printed after lists of object members, and lists of arr
         (progn
           (setq python_str (concat python_str "[" (elt path i) "]"))
           (setq i (+ i 1)))))
+    (princ python_str)))
+
+;;;###autoload
+(defun jsons-print-path ()
+  "Print the path to the JSON value under point, and save it in the kill ring."
+  (interactive)
+  (let ((python_str (jsons-render-path (jsons-get-path))))
     (progn (kill-new python_str)
            (princ python_str))))
 
